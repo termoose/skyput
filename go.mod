@@ -1,4 +1,4 @@
-module skyput
+module github.com/termoose/skyput
 
 go 1.13
 
