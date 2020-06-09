@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	_ "github.com/schollz/progressbar/v3"
 	"github.com/cheggaaa/pb"
 	"io"
 	_ "io"
@@ -12,7 +13,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 const portalUrl = "https://siasky.net"
@@ -44,7 +44,7 @@ func main() {
 	defer file.Close()
 
 	filename := filepath.Base(path)
-	//fileInfo, _ := file.Stat()
+	fileInfo, _ := file.Stat()
 
 	// prepare formdata
 	body := &bytes.Buffer{}
@@ -54,7 +54,13 @@ func main() {
 		panic(err)
 	}
 
+	//bar := progressbar.DefaultBytes(
+	//	fileInfo.Size(),
+	//	"uploading",
+	//)
+
 	_, err = io.Copy(part, file)
+	//_, err = io.Copy(part, file)
 	if err != nil {
 		panic(err)
 	}
@@ -63,15 +69,20 @@ func main() {
 		panic(err)
 	}
 
-	url := fmt.Sprintf("%s/%s?filename=%s", strings.TrimRight(portalUrl, "/"), strings.TrimLeft(portalUploadPath, "/"),
+	url := fmt.Sprintf("%s/%s?dryrun=true&filename=%s", strings.TrimRight(portalUrl, "/"), strings.TrimLeft(portalUploadPath, "/"),
 		filename)
 
-	req, err := http.NewRequest("POST", url, body)
+	bar := pb.New(int(fileInfo.Size()))
+	bar.Start()
+	reader := bar.NewProxyReader(body)
+
+	req, err := http.NewRequest("POST", url, reader)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Printf("Starting client.Do()\n")
 	// upload the file to skynet
 	client := &http.Client{}
 	resp, err := client.Do(req)
