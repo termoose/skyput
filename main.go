@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	_ "github.com/schollz/progressbar/v3"
-	"github.com/cheggaaa/pb"
+	"github.com/cheggaaa/pb/v3"
+	"github.com/fatih/color"
 	"io"
 	_ "io"
 	"mime/multipart"
@@ -54,13 +54,7 @@ func main() {
 		panic(err)
 	}
 
-	//bar := progressbar.DefaultBytes(
-	//	fileInfo.Size(),
-	//	"uploading",
-	//)
-
 	_, err = io.Copy(part, file)
-	//_, err = io.Copy(part, file)
 	if err != nil {
 		panic(err)
 	}
@@ -69,10 +63,15 @@ func main() {
 		panic(err)
 	}
 
-	url := fmt.Sprintf("%s/%s?dryrun=true&filename=%s", strings.TrimRight(portalUrl, "/"), strings.TrimLeft(portalUploadPath, "/"),
-		filename)
+	url := fmt.Sprintf("%s/%s?dryrun=true&filename=%s", strings.TrimRight(portalUrl, "/"),
+		strings.TrimLeft(portalUploadPath, "/"), filename)
+
+	tmpl := `{{ green "uploading ⏳" }} {{ bar . "[" "-" (cycle . "↖" "↗" "↘" "↙" ) "." "]"}} {{speed . "%s/s" | green }} {{percent .}}`
 
 	bar := pb.New(int(fileInfo.Size()))
+	bar.SetTemplateString(tmpl)
+	bar.Set(pb.SIBytesPrefix, true)
+	bar.SetWidth(80)
 	bar.Start()
 	reader := bar.NewProxyReader(body)
 
@@ -82,7 +81,6 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("Starting client.Do()\n")
 	// upload the file to skynet
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -90,16 +88,15 @@ func main() {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	// parse the response
-	//body = &bytes.Buffer{}
-	//_, err = body.ReadFrom(resp.Body)
-	//if err != nil {
-	//	panic(err)
-	//}
 
 	var apiResponse UploadReponse
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&apiResponse)
+
+	bar.Finish()
+
+	c := color.New(color.FgGreen)
+	c.Printf("share me  ⌛ ")
 
 	if err != nil {
 		panic(err)
