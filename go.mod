@@ -3,6 +3,7 @@ module skyput
 go 1.13
 
 require (
+	github.com/atotto/clipboard v0.1.2
 	github.com/cheggaaa/pb v2.0.7+incompatible
 	github.com/cheggaaa/pb/v3 v3.0.4
 	github.com/fatih/color v1.7.0

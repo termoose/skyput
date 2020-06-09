@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/atotto/clipboard"
 	"github.com/cheggaaa/pb/v3"
 	"github.com/fatih/color"
 	"io"
-	_ "io"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -22,24 +22,19 @@ type UploadReponse struct {
 	Skylink string `json:"skylink"`
 }
 
-func OpenFile(path string) (*os.File, string, error) {
-	handle, err := os.Open(path)
-	filename := filepath.Base(path)
-
-	if err != nil {
-		return nil, "", err
-	}
-
-	return handle, filename, nil
-}
-
 func main() {
+	if len(os.Args) < 2 {
+		c := color.New(color.FgYellow)
+		c.Printf("🏥 Usage: %s [filename]\n", os.Args[0])
+		return
+	}
 	path := os.Args[1]
 
 	// open the file
 	file, err := os.Open(path)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
 	defer file.Close()
 
@@ -58,10 +53,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = writer.Close()
-	if err != nil {
-		panic(err)
-	}
+	defer writer.Close()
 
 	url := fmt.Sprintf("%s/%s?dryrun=true&filename=%s", strings.TrimRight(portalUrl, "/"),
 		strings.TrimLeft(portalUploadPath, "/"), filename)
@@ -81,7 +73,6 @@ func main() {
 		panic(err)
 	}
 
-	// upload the file to skynet
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -96,11 +87,15 @@ func main() {
 	bar.Finish()
 
 	c := color.New(color.FgGreen)
-	c.Printf("share me  ⌛ ")
+	c.Printf("clipboard 💥 ")
+
+	skyLink := fmt.Sprintf("https://siasky.net/%s/%s", apiResponse.Skylink, filename)
+
+	clipboard.WriteAll(skyLink)
 
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("https://siasky.net/%s/%s\n", apiResponse.Skylink, filename)
+	fmt.Println(skyLink)
 }
