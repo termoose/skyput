@@ -53,9 +53,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer writer.Close()
+	writer.Close()
 
-	url := fmt.Sprintf("%s/%s?dryrun=true&filename=%s", strings.TrimRight(portalUrl, "/"),
+	url := fmt.Sprintf("%s/%s?filename=%s", strings.TrimRight(portalUrl, "/"),
 		strings.TrimLeft(portalUploadPath, "/"), filename)
 
 	tmpl := `{{ green "uploading ⏳" }} {{ bar . "[" "-" (cycle . "↖" "↗" "↘" "↙" ) "." "]"}} {{speed . "%s/s" | green }} {{percent .}}`
@@ -79,6 +79,12 @@ func main() {
 		panic(err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		c := color.New(color.FgRed)
+		c.Printf("🚫 %s\n", resp.Status)
+		return
+	}
 
 	var apiResponse UploadReponse
 	decoder := json.NewDecoder(resp.Body)
