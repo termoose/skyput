@@ -18,8 +18,7 @@ import (
 func Do(path string) error {
 	file, err := os.Open(path)
 	if err != nil {
-		fmt.Println(err)
-		return nil
+		return fmt.Errorf("file open: %v", err)
 	}
 	defer file.Close()
 
@@ -69,7 +68,7 @@ func Do(path string) error {
 		return fmt.Errorf("🚫 %s\n", resp.Status)
 	}
 
-	var apiResponse UploadReponse
+	var apiResponse Reponse
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&apiResponse)
 

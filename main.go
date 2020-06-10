@@ -1,15 +1,30 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"github.com/fatih/color"
 	"github.com/termoose/skyput/upload"
 	"os"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		c := color.New(color.FgYellow)
-		c.Printf("🏥 Usage: %s [filename]\n", os.Args[0])
+	portal := flag.Bool("portal", false, "select portal")
+	flag.Parse()
+
+	flag.Usage = func() {
+		c := color.New(color.FgGreen)
+		c.Println("Usage: skynet filename [-portal]")
+		c.Println("\t-portal\tshow portal selector")
+	}
+
+	if flag.NFlag() == 0 && flag.NArg() == 0 {
+		flag.Usage()
+		return
+	}
+
+	if *portal {
+		fmt.Printf("Select portal? %v\n", *portal)
 		return
 	}
 

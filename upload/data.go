@@ -1,8 +1,8 @@
 package upload
 
-const portalUrl = "https://siasky.nett"
+const portalUrl = "https://siasky.net"
 const portalUploadPath = "/skynet/skyfile"
 
-type UploadReponse struct {
+type Reponse struct {
 	Skylink string `json:"skylink"`
 }
