@@ -2,14 +2,15 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	_ "fmt"
 	"github.com/fatih/color"
+	"github.com/termoose/skyput/portal"
 	"github.com/termoose/skyput/upload"
 	"os"
 )
 
 func main() {
-	portal := flag.Bool("portal", false, "select portal")
+	portalSelector := flag.Bool("portal", false, "select portal")
 	flag.Parse()
 
 	flag.Usage = func() {
@@ -23,8 +24,8 @@ func main() {
 		return
 	}
 
-	if *portal {
-		fmt.Printf("Select portal? %v\n", *portal)
+	if *portalSelector {
+		portal.Show()
 		return
 	}
 
