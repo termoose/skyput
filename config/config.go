@@ -59,6 +59,7 @@ func writeConfig(filename string, data Config) {
 func writeDummyConfig(filename string) Config {
 	portals := []string{
 		"https://siasky.net",
+		"https://skyportal.xyz",
 		"https://skynet.luxor.tech",
 		"https://www.siacdn.com",
 	}

@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	_ "fmt"
 	"github.com/fatih/color"
 	"github.com/termoose/skyput/config"
@@ -16,7 +15,6 @@ func main() {
 	flag.Parse()
 
 	c := config.Parse()
-	fmt.Printf("Config: %v\n", c)
 
 	flag.Usage = func() {
 		c := color.New(color.FgGreen)
@@ -35,7 +33,6 @@ func main() {
 	}
 
 	selectedPortal := c.GetSelectedPortal()
-	fmt.Printf("Selected portal: %s\n", selectedPortal)
 	err := upload.Do(os.Args[1], selectedPortal)
 
 	if err != nil {
