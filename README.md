@@ -35,9 +35,8 @@ skyput cat_picture.jpg
 ```
 
 ## To-do
-- Support configurable Skynet portals
-- Add support /skynet/portals [GET]
 - Add support for pushing directories
 - Support encryption when it arrives
 - Add some timeout when requests are hanging
 - Support resuming uploads
+- Add support /skynet/portals [GET]?
