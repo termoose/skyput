@@ -15,7 +15,7 @@ import (
 	"strings"
 )
 
-func Do(path string) error {
+func Do(path, portalUrl string) error {
 	file, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("file open: %v", err)
@@ -39,7 +39,7 @@ func Do(path string) error {
 	}
 	writer.Close()
 
-	url := fmt.Sprintf("%s/%s?dryrun=true&filename=%s", strings.TrimRight(portalUrl, "/"),
+	url := fmt.Sprintf("%s/%s?dryrun=false&filename=%s", strings.TrimRight(portalUrl, "/"),
 		strings.TrimLeft(portalUploadPath, "/"), filename)
 
 	tmpl := `{{ green "uploading ⏳" }} {{ bar . "[" "-" (cycle . "↖" "↗" "↘" "↙" ) "." "]"}} {{speed . "%s/s" | green }} {{percent .}}`
@@ -81,7 +81,7 @@ func Do(path string) error {
 	c := color.New(color.FgGreen)
 	c.Printf("clipboard 💥 ")
 
-	skyLink := fmt.Sprintf("https://siasky.net/%s/%s", apiResponse.Skylink, filename)
+	skyLink := fmt.Sprintf("%s/%s/%s", portalUrl, apiResponse.Skylink, filename)
 
 	clipboard.WriteAll(skyLink)
 

@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	_ "fmt"
 	"github.com/fatih/color"
+	"github.com/termoose/skyput/config"
 	"github.com/termoose/skyput/portal"
 	"github.com/termoose/skyput/upload"
 	"os"
@@ -12,6 +14,9 @@ import (
 func main() {
 	portalSelector := flag.Bool("portal", false, "select portal")
 	flag.Parse()
+
+	c := config.Parse()
+	fmt.Printf("Config: %v\n", c)
 
 	flag.Usage = func() {
 		c := color.New(color.FgGreen)
@@ -25,11 +30,13 @@ func main() {
 	}
 
 	if *portalSelector {
-		portal.Show()
+		portal.Show(&c)
 		return
 	}
 
-	err := upload.Do(os.Args[1])
+	selectedPortal := c.GetSelectedPortal()
+	fmt.Printf("Selected portal: %s\n", selectedPortal)
+	err := upload.Do(os.Args[1], selectedPortal)
 
 	if err != nil {
 		c := color.New(color.FgRed)

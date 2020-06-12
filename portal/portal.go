@@ -3,13 +3,13 @@ package portal
 import (
 	"fmt"
 	"github.com/manifoldco/promptui"
+	"github.com/termoose/skyput/config"
 )
 
-func Show() error {
+func Show(config *config.Config) error {
 	prompt := promptui.Select{
-		Label: "Select Day",
-		Items: []string{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
-			"Saturday", "Sunday"},
+		Label: "Select Portal",
+		Items: config.GetPortals(),
 	}
 
 	_, result, err := prompt.Run()
@@ -18,7 +18,6 @@ func Show() error {
 		return fmt.Errorf("prompt failed: %v", err)
 	}
 
-	fmt.Printf("Selection: %s\n", result)
-
+	config.SetDefaultPortal(result)
 	return nil
 }
