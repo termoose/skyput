@@ -84,8 +84,6 @@ func Do(path, portalUrl string) error {
 	skyLink := fmt.Sprintf("%s/%s/%s", portalUrl, apiResponse.Skylink, filename)
 
 	clipboard.WriteAll(skyLink)
-
-
 	fmt.Println(skyLink)
 
 	return nil
