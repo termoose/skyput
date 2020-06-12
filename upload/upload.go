@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 func Do(path, portalUrl string) error {
@@ -57,7 +58,9 @@ func Do(path, portalUrl string) error {
 		return fmt.Errorf("create request: %v", err)
 	}
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: 20 * time.Second,
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("http request: %v", err)
