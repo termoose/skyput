@@ -2,6 +2,8 @@
 
 Upload files to [Skynet](https://siasky.net) from your command line.
 
+![Demo!](skyput_demo.gif)
+
 ## Install
 
 ### Go
@@ -17,6 +19,16 @@ brew install termoose/tap/skyput
 ```
 
 ## Usage
+
+On the first run a config file will be created for you in `~/.config/skyput`.
+If you want to change the default Skynet portal you can run:
+```bash
+skyput -portal
+```
+
+You can modify the config file and add custom portals as well!
+
+Start uploading to Skynet:
 
 ```bash
 skyput cat_picture.jpg
