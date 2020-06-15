@@ -9,6 +9,7 @@ import (
 	"github.com/termoose/skyput/portal"
 	"github.com/termoose/skyput/upload"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -20,9 +21,9 @@ func main() {
 
 	flag.Usage = func() {
 		c := color.New(color.FgGreen)
-		c.Println("Usage: skynet filename [-portal] [-list]")
+		c.Println("Usage: skynet filename [-portal] [-list n]")
 		c.Println("\t-portal\tshow portal selector")
-		c.Println("\t-list\tlist previous uploads")
+		c.Println("\t-list n\tlist n previous uploads")
 	}
 
 	if flag.NFlag() == 0 && flag.NArg() == 0 {
@@ -36,9 +37,14 @@ func main() {
 	}
 
 	if *uploadList {
+		count := 10
+
+		if flag.NArg() == 1 && flag.NFlag() == 1 {
+			count, _ = strconv.Atoi(os.Args[2])
+		}
+
 		c, _ := cache.NewCache("cache")
-		c.ShowLatest(10)
-		//fmt.Printf("Show list of uploads here!\n")
+		c.ShowLatest(count)
 		return
 	}
 
