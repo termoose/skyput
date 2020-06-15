@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	Portal string   `yaml:"portal"`
+	Portal  string   `yaml:"portal"`
 	Portals []string `yaml:"portals"`
 }
 
@@ -65,7 +65,7 @@ func writeDummyConfig(filename string) Config {
 	}
 
 	dummy := Config{
-		Portal: "https://siasky.net",
+		Portal:  "https://siasky.net",
 		Portals: portals,
 	}
 
