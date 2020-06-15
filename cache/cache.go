@@ -54,6 +54,7 @@ func (c *Cache) GetLatest(n int) (map[string]string, error) {
 	err := c.handle.View(func(tx *badger.Txn) error {
 		opts := badger.DefaultIteratorOptions
 		opts.PrefetchSize = 10
+		opts.Reverse = true
 		it := tx.NewIterator(opts)
 		defer it.Close()
 
