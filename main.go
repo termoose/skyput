@@ -23,7 +23,7 @@ func main() {
 		c := color.New(color.FgGreen)
 		c.Println("Usage: skynet filename [-portal] [-list n]")
 		c.Println("\t-portal\tshow portal selector")
-		c.Println("\t-list n\tlist n previous uploads")
+		c.Println("\t-list n\tshow the n previous uploads (default 10)")
 	}
 
 	if flag.NFlag() == 0 && flag.NArg() == 0 {

@@ -34,9 +34,15 @@ Start uploading to Skynet:
 skyput cat_picture.jpg
 ```
 
+See your previous uploads:
+
+```bash
+skyput -list
+```
+
 ## To-do
-- Show a list of previous upload, maybe with `-list`
+- Find a way to only set a timeout for the response
 - Add support for pushing directories
 - Support encryption when it arrives
-- Support resuming uploads
+- Support resuming uploads (might noe be possible!)
 - Add support /skynet/portals [GET]?

@@ -26,6 +26,7 @@ func Do(path, portalUrl string) error {
 
 	filename := filepath.Base(path)
 	fileInfo, _ := file.Stat()
+	fileSize := fileInfo.Size()
 
 	// prepare formdata
 	body := &bytes.Buffer{}
@@ -46,7 +47,7 @@ func Do(path, portalUrl string) error {
 
 	tmpl := `{{ green "uploading ⏳" }} {{ bar . "[" "-" (cycle . "↖" "↗" "↘" "↙" ) "." "]"}} {{speed . "%s/s" | green }} {{percent .}}`
 
-	bar := pb.New(int(fileInfo.Size()))
+	bar := pb.New(int(fileSize))
 	bar.SetTemplateString(tmpl)
 	bar.Set(pb.SIBytesPrefix, true)
 	bar.SetWidth(80)
@@ -60,7 +61,7 @@ func Do(path, portalUrl string) error {
 	}
 
 	client := &http.Client{
-		Timeout: 5 * time.Minute,
+		Timeout: 2 * time.Minute,
 	}
 	resp, err := client.Do(req)
 	if err != nil {
