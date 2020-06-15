@@ -3,8 +3,11 @@ package cache
 import (
 	"fmt"
 	"github.com/dgraph-io/badger/v2"
+	"github.com/fatih/color"
 	"os/user"
 	"path/filepath"
+	"strconv"
+	"time"
 )
 
 type Cache struct {
@@ -23,6 +26,26 @@ func NewCache(name string) (*Cache, error) {
 	return &Cache{
 		handle: db,
 	}, nil
+}
+
+func (c *Cache) ShowLatest(n int) {
+	latest, _ := c.GetLatest(n)
+
+	for key, value := range latest {
+		ts, err := strconv.ParseInt(key, 10, 64)
+
+		if err != nil {
+			continue
+		}
+
+		tm := time.Unix(ts, 0)
+
+		timeColor := color.New(color.FgMagenta)
+		timeColor.Printf("[%s] ", tm)
+
+		linkColor := color.New(color.FgCyan)
+		linkColor.Printf("%s\n", value)
+	}
 }
 
 func (c *Cache) GetLatest(n int) (map[string]string, error) {

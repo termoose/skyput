@@ -7,6 +7,7 @@ import (
 	"github.com/atotto/clipboard"
 	"github.com/cheggaaa/pb/v3"
 	"github.com/fatih/color"
+	"github.com/termoose/skyput/cache"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -59,7 +60,7 @@ func Do(path, portalUrl string) error {
 	}
 
 	client := &http.Client{
-		Timeout: 20 * time.Second,
+		Timeout: 5 * time.Minute,
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -89,5 +90,18 @@ func Do(path, portalUrl string) error {
 	clipboard.WriteAll(skyLink)
 	fmt.Println(skyLink)
 
-	return nil
+	return storeInCache(skyLink)
+}
+
+func storeInCache(skylink string) error {
+	cache, err := cache.NewCache("cache")
+
+	if err != nil {
+		return err
+	}
+
+	currentTime := time.Now().Unix()
+	key := fmt.Sprintf("%d", currentTime)
+
+	return cache.Write(key, skylink)
 }
