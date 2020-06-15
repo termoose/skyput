@@ -35,6 +35,7 @@ skyput cat_picture.jpg
 ```
 
 ## To-do
+- Show a list of previous upload, maybe with `-list`
 - Add support for pushing directories
 - Support encryption when it arrives
 - Support resuming uploads
