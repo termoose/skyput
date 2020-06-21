@@ -40,6 +40,12 @@ See your previous uploads:
 skyput -list
 ```
 
+Add `-ddg` to expose the uploaded file to [DappDappGo](https://dappdappgo.coolhd.hu) search engine.
+
+```bash
+skyput -ddg searchable_file.mp4
+```
+
 ## To-do
 - Find a way to only set a timeout for the response
 - Add support for pushing directories
