@@ -6,6 +6,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/termoose/skyput/cache"
 	"github.com/termoose/skyput/config"
+	"github.com/termoose/skyput/dappdappgo"
 	"github.com/termoose/skyput/portal"
 	"github.com/termoose/skyput/upload"
 	"os"
@@ -15,15 +16,17 @@ import (
 func main() {
 	portalSelector := flag.Bool("portal", false, "select portal")
 	uploadList := flag.Bool("list", false, "list previous uploads")
+	ddg := flag.Bool("ddg", false, "make file searchable on dappdappgo")
 	flag.Parse()
 
 	c := config.Parse()
 
 	flag.Usage = func() {
 		c := color.New(color.FgGreen)
-		c.Println("Usage: skynet filename [-portal] [-list n]")
+		c.Println("Usage: skynet [-portal] [-list n] filename")
 		c.Println("\t-portal\tshow portal selector")
 		c.Println("\t-list n\tshow the n previous uploads (default 10)")
+		c.Println("\t-ddg\tmake the file searchable on dappdappgo")
 	}
 
 	if flag.NFlag() == 0 && flag.NArg() == 0 {
@@ -32,7 +35,8 @@ func main() {
 	}
 
 	if *portalSelector {
-		portal.Show(&c)
+		_, newDefault := portal.Show(c.GetPortals())
+		c.SetDefaultPortal(newDefault)
 		return
 	}
 
@@ -49,7 +53,17 @@ func main() {
 	}
 
 	selectedPortal := c.GetSelectedPortal()
-	err := upload.Do(os.Args[1], selectedPortal)
+	err, skyHash := upload.Do(os.Args[flag.NFlag() + flag.NArg()], selectedPortal)
+
+	if *ddg {
+		if flag.NArg() == 0 {
+			c := color.New(color.FgYellow)
+			c.Println("No filename specified!")
+			return
+		}
+
+		err = dappdappgo.Post(skyHash)
+	}
 
 	if err != nil {
 		c := color.New(color.FgRed)

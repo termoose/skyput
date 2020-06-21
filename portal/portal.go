@@ -6,18 +6,17 @@ import (
 	"github.com/termoose/skyput/config"
 )
 
-func Show(config *config.Config) error {
+func Show(portals config.PortalList) (error, string) {
 	prompt := promptui.Select{
 		Label: "Select Portal",
-		Items: config.GetPortals(),
+		Items: portals,
 	}
 
 	_, result, err := prompt.Run()
 
 	if err != nil {
-		return fmt.Errorf("prompt failed: %v", err)
+		return fmt.Errorf("prompt failed: %v", err), ""
 	}
 
-	config.SetDefaultPortal(result)
-	return nil
+	return nil, result
 }

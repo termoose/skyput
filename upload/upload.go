@@ -17,10 +17,10 @@ import (
 	"time"
 )
 
-func Do(path, portalUrl string) error {
+func Do(path, portalUrl string) (error, string) {
 	file, err := os.Open(path)
 	if err != nil {
-		return fmt.Errorf("file open: %v", err)
+		return fmt.Errorf("file open: %v", err), ""
 	}
 	defer file.Close()
 
@@ -33,12 +33,12 @@ func Do(path, portalUrl string) error {
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("file", filename)
 	if err != nil {
-		return fmt.Errorf("create form file: %v", err)
+		return fmt.Errorf("create form file: %v", err), ""
 	}
 
 	_, err = io.Copy(part, file)
 	if err != nil {
-		return fmt.Errorf("io copy: %v", err)
+		return fmt.Errorf("io copy: %v", err), ""
 	}
 	writer.Close()
 
@@ -57,7 +57,7 @@ func Do(path, portalUrl string) error {
 	req, err := http.NewRequest("POST", url, reader)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	if err != nil {
-		return fmt.Errorf("create request: %v", err)
+		return fmt.Errorf("create request: %v", err), ""
 	}
 
 	client := &http.Client{
@@ -65,12 +65,12 @@ func Do(path, portalUrl string) error {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("http request: %v", err)
+		return fmt.Errorf("http request: %v", err), ""
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("🚫 %s\n", resp.Status)
+		return fmt.Errorf("🚫 %s\n", resp.Status), ""
 	}
 
 	var apiResponse Reponse
@@ -78,7 +78,7 @@ func Do(path, portalUrl string) error {
 	err = decoder.Decode(&apiResponse)
 
 	if err != nil {
-		return fmt.Errorf("json decode: %v", err)
+		return fmt.Errorf("json decode: %v", err), ""
 	}
 
 	bar.Finish()
@@ -91,7 +91,7 @@ func Do(path, portalUrl string) error {
 	clipboard.WriteAll(skyLink)
 	fmt.Println(skyLink)
 
-	return storeInCache(skyLink)
+	return storeInCache(skyLink), apiResponse.Skylink
 }
 
 func storeInCache(skylink string) error {

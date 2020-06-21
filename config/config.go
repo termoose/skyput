@@ -9,9 +9,11 @@ import (
 	"path/filepath"
 )
 
+type PortalList []string
+
 type Config struct {
-	Portal  string   `yaml:"portal"`
-	Portals []string `yaml:"portals"`
+	Portal  string     `yaml:"portal"`
+	Portals PortalList `yaml:"portals"`
 }
 
 func Parse() Config {
@@ -45,7 +47,7 @@ func (c Config) SetDefaultPortal(portal string) {
 	writeConfig(filename, c)
 }
 
-func (c Config) GetPortals() []string {
+func (c Config) GetPortals() PortalList {
 	return c.Portals
 }
 
@@ -57,7 +59,7 @@ func writeConfig(filename string, data Config) {
 }
 
 func writeDummyConfig(filename string) Config {
-	portals := []string{
+	portals := PortalList{
 		"https://siasky.net",
 		"https://skyportal.xyz",
 		"https://skynet.luxor.tech",
