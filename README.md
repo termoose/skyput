@@ -34,13 +34,13 @@ Start uploading to Skynet:
 skyput cat_picture.jpg
 ```
 
-or upload all files in the current directory!
+or upload `all` files in the current directory!
 
 ```bash
 skyput -all
 ```
 
-or just your previous uploads:
+or just `list` your previous uploads:
 
 ```bash
 skyput -list
