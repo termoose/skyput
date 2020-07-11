@@ -67,7 +67,7 @@ func writeDummyConfig(filename string) Config {
 	}
 
 	dummy := Config{
-		Portal:  "https://siasky.net",
+		Portal:  "https://skyportal.xyz",
 		Portals: portals,
 	}
 
