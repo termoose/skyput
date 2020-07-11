@@ -34,13 +34,19 @@ Start uploading to Skynet:
 skyput cat_picture.jpg
 ```
 
-See your previous uploads:
+or upload all files in the current directory!
+
+```bash
+skyput -all
+```
+
+or just your previous uploads:
 
 ```bash
 skyput -list
 ```
 
-Add `-ddg` to expose the uploaded file to [DappDappGo](https://dappdappgo.coolhd.hu) search engine.
+you can also add `-ddg` to expose the uploaded file to [DappDappGo](https://dappdappgo.coolhd.hu) search engine.
 
 ```bash
 skyput -ddg searchable_file.mp4
