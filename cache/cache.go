@@ -28,16 +28,14 @@ func NewCache(name string) (*Cache, error) {
 	}, nil
 }
 
+func (c *Cache) Close() {
+	c.handle.Close()
+}
+
 func (c *Cache) ShowLatest(n int) {
 	latest, _ := c.GetLatest(n)
 
-	for key, value := range latest {
-		ts, err := strconv.ParseInt(key, 10, 64)
-
-		if err != nil {
-			continue
-		}
-
+	for ts, value := range latest {
 		tm := time.Unix(ts, 0)
 
 		timeColor := color.New(color.FgMagenta)
@@ -48,13 +46,13 @@ func (c *Cache) ShowLatest(n int) {
 	}
 }
 
-func (c *Cache) GetLatest(n int) (map[string]string, error) {
-	result := make(map[string]string)
+func (c *Cache) GetLatest(n int) (map[int64]string, error) {
+	result := make(map[int64]string)
 
 	err := c.handle.View(func(tx *badger.Txn) error {
 		opts := badger.DefaultIteratorOptions
 		opts.PrefetchSize = 10
-		opts.Reverse = true
+		opts.Reverse = false
 		it := tx.NewIterator(opts)
 		defer it.Close()
 
@@ -72,7 +70,13 @@ func (c *Cache) GetLatest(n int) (map[string]string, error) {
 				return err
 			}
 
-			result[string(key)] = string(value)
+			ts, err := strconv.ParseInt(string(key), 10, 64)
+
+			if err != nil {
+				continue
+			}
+
+			result[ts] = string(value)
 			n--
 		}
 

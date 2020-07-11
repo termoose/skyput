@@ -17,16 +17,19 @@ func main() {
 	portalSelector := flag.Bool("portal", false, "select portal")
 	uploadList := flag.Bool("list", false, "list previous uploads")
 	ddg := flag.Bool("ddg", false, "make file searchable on dappdappgo")
+	all := flag.Bool("all", false, "upload all files in current directory")
 	flag.Parse()
 
 	c := config.Parse()
 
 	flag.Usage = func() {
 		c := color.New(color.FgGreen)
+
 		c.Println("Usage: skynet [-portal] [-list n] filename")
-		c.Println("\t-portal\tshow portal selector")
-		c.Println("\t-list n\tshow the n previous uploads (default 10)")
-		c.Println("\t-ddg\tmake the file searchable on dappdappgo")
+
+		flag.VisitAll(func(f *flag.Flag) {
+			c.Printf("\t-%s\t%s\n", f.Name, f.Usage)
+		})
 	}
 
 	if flag.NFlag() == 0 && flag.NArg() == 0 {
@@ -53,7 +56,15 @@ func main() {
 	}
 
 	selectedPortal := c.GetSelectedPortal()
-	err, skyHash := upload.Do(os.Args[flag.NFlag() + flag.NArg()], selectedPortal)
+
+	var uploadString string
+	if *all {
+		uploadString = "*"
+	} else {
+		uploadString = os.Args[flag.NFlag()+flag.NArg()]
+	}
+
+	err, skyHashes := upload.Do(uploadString, selectedPortal)
 
 	if *ddg {
 		if flag.NArg() == 0 {
@@ -62,7 +73,11 @@ func main() {
 			return
 		}
 
-		err = dappdappgo.Post(skyHash)
+		if err == nil {
+			for _, h := range skyHashes {
+				err = dappdappgo.Post(h)
+			}
+		}
 	}
 
 	if err != nil {

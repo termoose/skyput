@@ -13,11 +13,39 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
 
-func Do(path, portalUrl string) (error, string) {
+func Do(path, portalUrl string) (error, []string) {
+	matches, err := filepath.Glob(path)
+	var skyHashes []string
+
+	if err != nil {
+		return err, []string{}
+	}
+
+	for _, m := range matches {
+		skip, _ := isDir(m)
+
+		if skip {
+			continue
+		}
+
+		err, skyHash := doUpload(m, portalUrl)
+
+		if err != nil {
+			return err, []string{}
+		}
+
+		skyHashes = append(skyHashes, skyHash)
+	}
+
+	return nil, skyHashes
+}
+
+func doUpload(path, portalUrl string) (error, string) {
 	file, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("file open: %v", err), ""
@@ -96,13 +124,24 @@ func Do(path, portalUrl string) (error, string) {
 
 func storeInCache(skylink string) error {
 	cache, err := cache.NewCache("cache")
+	defer cache.Close()
 
 	if err != nil {
 		return err
 	}
 
 	currentTime := time.Now().Unix()
-	key := fmt.Sprintf("%d", currentTime)
+	key := strconv.FormatInt(currentTime, 10)
 
 	return cache.Write(key, skylink)
+}
+
+func isDir(path string) (bool, error) {
+	fileInfo, err := os.Stat(path)
+
+	if err != nil {
+		return false, err
+	}
+
+	return fileInfo.IsDir(), err
 }
